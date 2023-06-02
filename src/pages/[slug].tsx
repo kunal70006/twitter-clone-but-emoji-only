@@ -25,7 +25,7 @@ const ProfileFeed = (props: { userId: string }) => {
   if (!data || data.length === 0) return <div>User has not posted</div>;
 
   return (
-    <div className="flex flex-col px-4">
+    <div className="flex flex-col px-2">
       {data.map((post) => (
         <PostView {...post} key={post.post.id} />
       ))}
