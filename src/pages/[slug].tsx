@@ -7,6 +7,31 @@ import { prisma } from "~/server/db";
 import superjson from "superjson";
 import { PageLayout } from "~/components/Layout";
 import Image from "next/image";
+import LoadingSpinner from "~/components/Loading";
+import PostView from "~/components/PostView";
+
+const ProfileFeed = (props: { userId: string }) => {
+  const { data, isLoading } = api.posts.getPostsByUserId.useQuery({
+    userId: props.userId,
+  });
+
+  if (isLoading)
+    return (
+      <div className="flex h-full items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (!data || data.length === 0) return <div>User has not posted</div>;
+
+  return (
+    <div className="flex flex-col px-4">
+      {data.map((post) => (
+        <PostView {...post} key={post.post.id} />
+      ))}
+    </div>
+  );
+};
 
 const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const { data } = api.profile.getUserByUsername.useQuery({
@@ -22,7 +47,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <PageLayout>
-        <div className="relative h-48 border-b border-slate-600 bg-gradient-to-r from-teal-200 to-teal-500">
+        <div className="relative h-48 border-b border-slate-600 bg-gradient-to-l from-[rgb(32,38,57)] from-[11%] to-[rgb(63,76,119)] to-[70%]">
           <div className="absolute bottom-0 left-0 -mb-24 ml-8 flex flex-col items-center">
             <Image
               src={data.profileImageUrl}
@@ -37,6 +62,8 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
           </div>
           <div className="h-80"></div>
           <div className="w-full border-b border-slate-600"></div>
+
+          <ProfileFeed userId={data.id} />
         </div>
       </PageLayout>
     </>
