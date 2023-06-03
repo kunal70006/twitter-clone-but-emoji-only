@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  DATABASE_URl: "https://fake.com"
+  DATABASE_URL: "https://fake.com"
 
 jobs:
   build:
